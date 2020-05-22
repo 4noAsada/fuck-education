@@ -1,12 +1,12 @@
 #include <QApplication>
-#include <QLabel>
+#include "qawidget.h"
 
 int main(int argc, char *argv[])
 {
     QApplication qguiapp(argc, argv);
 
-    QLabel *label = new QLabel("Hello World!");
-    label->show();
+    QAWidget *widget = new QAWidget("Hello", "World");
+    widget->show();
 
     return qguiapp.exec();
 }

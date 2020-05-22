@@ -1,4 +1,8 @@
 QT += gui widgets
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    qawidget.cpp
+
+HEADERS += \
+    qawidget.h
