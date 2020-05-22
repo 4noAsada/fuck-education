@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "qawidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -11,6 +12,8 @@ public:
 
 signals:
 
+private:
+    QAWidget *qawidget;
 };
 
 #endif // MAINWINDOW_H
