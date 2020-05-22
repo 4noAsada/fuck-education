@@ -1,12 +1,12 @@
 #include <QApplication>
-#include "qawidget.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication qguiapp(argc, argv);
 
-    QAWidget *widget = new QAWidget("Hello", "World");
-    widget->show();
+    MainWindow *window = new MainWindow;
+    window->show();
 
     return qguiapp.exec();
 }
