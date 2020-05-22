@@ -3,31 +3,51 @@
 
 #include <QLabel>
 #include <QLineEdit>
-
+#include <QPushButton>
+#include <QList>
+#include <QPair>
 #include <QWidget>
+#include <QCheckBox>
+#include <QProgressBar>
 
 class QAWidget : public QWidget
 {
     Q_OBJECT
 public:
+    using QAListT = QList<QPair<QString, QString>>;
+
     explicit QAWidget(
-            const QString &questionLabel_,
-            const QString &answer_,
+            const QAListT &qalist,
             QWidget *parent = nullptr
             );
 
+    void refresh();
 
     void onTextChanged(const QString &);
     void onAnswerChecked(bool correctness);
+    void onPreviousPushed();
+    void onNextPushed();
+    void onPreviousPressed();
+    void onNextPressed();
+
+    static const QAListT TEST_QALIST;
 
 signals:
     void answerChecked(bool correctness);
 
 
 private:
-    QString answer_;
+    QAListT::size_type current_index_;
+    QAListT qalist_;
+
     QLabel *questionLabel_;
     QLineEdit *answerInput_;
+
+    QPushButton *previousButton;
+    QPushButton *nextButton;
+
+    QCheckBox *circleCheckBox;
+    QProgressBar *progressBar;
 
 };
 
