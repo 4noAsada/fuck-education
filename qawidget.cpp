@@ -2,7 +2,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-const QAWidget::QAListT QAWidget::TEST_QALIST = {
+const QAWidget::PureQAListT QAWidget::TEST_QALIST = {
     {"Hello", "World"},
     {"Human", "People"},
     {"Jerk", "Off"},
@@ -15,10 +15,9 @@ const QAWidget::QAListT QAWidget::TEST_QALIST = {
 };
 
 
-QAWidget::QAWidget(const QAWidget::QAListT &qalist, QWidget *parent)
+QAWidget::QAWidget(const QAWidget::PureQAListT &qalist, QWidget *parent)
     : QWidget(parent),
-      current_index_(0),
-      qalist_(qalist)
+      current_index_(0)
 {
     questionLabel_ = new QLabel();
     questionLabel_->setAlignment(Qt::AlignCenter);
@@ -41,27 +40,42 @@ QAWidget::QAWidget(const QAWidget::QAListT &qalist, QWidget *parent)
     QHBoxLayout *progressLayout = new QHBoxLayout;
     progressLayout->addWidget(progressBar);
 
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(questionLabel_);
-    layout->addWidget(answerInput_);
-    layout->addLayout(buttonLayout);
-    layout->addLayout(progressLayout);
+    listWidget = new QListWidget(this);
+    for (const QPair<QString, QString> &x : qalist) {
+        qalist_.append(
+            {new QListWidgetItem(x.first, listWidget), x.second}
+        );
+    }
 
-    setLayout(layout);
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    leftLayout->addWidget(listWidget);
+
+    QVBoxLayout *rightLayout = new QVBoxLayout;
+    rightLayout->addWidget(questionLabel_);
+    rightLayout->addWidget(answerInput_);
+    rightLayout->addLayout(buttonLayout);
+    rightLayout->addLayout(progressLayout);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->addLayout(leftLayout);
+    mainLayout->addLayout(rightLayout);
+
+    setLayout(mainLayout);
     setWindowTitle("QAWidget");
 
     connect(answerInput_, &QLineEdit::textChanged, this, &QAWidget::onTextChanged);
     connect(this, &QAWidget::answerChecked, this, &QAWidget::onAnswerChecked);
     connect(previousButton, &QPushButton::clicked, this, &QAWidget::onPreviousPushed);
     connect(nextButton, &QPushButton::clicked, this, &QAWidget::onNextPushed);
-    connect(nextButton, &QPushButton::pressed, this, &QAWidget::onNextPressed);
+    connect(listWidget, &QListWidget::itemClicked, this, &QAWidget::onItemClicked);
 
     refresh();
 }
 
 void QAWidget::refresh()
 {
-    questionLabel_->setText(qalist_[current_index_].first);
+    listWidget->setCurrentItem(qalist_[current_index_].first);
+    questionLabel_->setText(qalist_[current_index_].first->text());
     answerInput_->clear();
     progressBar->setValue(current_index_);
 }
@@ -104,7 +118,8 @@ void QAWidget::onNextPushed()
     }
 }
 
-void QAWidget::onNextPressed()
+void QAWidget::onItemClicked(QListWidgetItem *item)
 {
-    qDebug("Pressed!!!!!");
+    current_index_ = listWidget->currentRow();
+    refresh();
 }

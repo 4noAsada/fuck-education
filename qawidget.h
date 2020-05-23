@@ -9,15 +9,18 @@
 #include <QWidget>
 #include <QCheckBox>
 #include <QProgressBar>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 class QAWidget : public QWidget
 {
     Q_OBJECT
 public:
-    using QAListT = QList<QPair<QString, QString>>;
+    using QAListT = QList<QPair<QListWidgetItem *, QString>>;
+    using PureQAListT = QList<QPair<QString, QString>>;
 
     explicit QAWidget(
-            const QAListT &qalist,
+            const PureQAListT &qalist,
             QWidget *parent = nullptr
             );
 
@@ -28,9 +31,9 @@ public:
     void onPreviousPushed();
     void onNextPushed();
     void onPreviousPressed();
-    void onNextPressed();
+    void onItemClicked(QListWidgetItem *item);
 
-    static const QAListT TEST_QALIST;
+    static const PureQAListT TEST_QALIST;
 
 signals:
     void answerChecked(bool correctness);
@@ -48,6 +51,8 @@ private:
 
     QCheckBox *circleCheckBox;
     QProgressBar *progressBar;
+
+    QListWidget *listWidget;
 
 };
 
