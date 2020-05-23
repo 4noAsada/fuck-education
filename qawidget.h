@@ -28,10 +28,10 @@ public:
 
     void onTextChanged(const QString &);
     void onAnswerChecked(bool correctness);
-    void onPreviousPushed();
-    void onNextPushed();
-    void onPreviousPressed();
-    void onItemClicked(QListWidgetItem *item);
+    void onPreviousClicked();
+    void onNextClicked();
+    void onShowAnswerButtonClicked();
+    void onItemSelectionChanged();
 
     static const PureQAListT TEST_QALIST;
 
@@ -44,10 +44,13 @@ private:
     QAListT qalist_;
 
     QLabel *questionLabel_;
+    QLabel *answerLabel;
     QLineEdit *answerInput_;
 
     QPushButton *previousButton;
     QPushButton *nextButton;
+
+    QPushButton *showAnswerButton;
 
     QCheckBox *circleCheckBox;
     QProgressBar *progressBar;
