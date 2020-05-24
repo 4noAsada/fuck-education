@@ -31,20 +31,20 @@ QAWidget::QAWidget(const QAWidget::PureQAListT &qalist, QWidget *parent)
     previousButton = new QPushButton("&Previous");
     nextButton = new QPushButton("&Next");
     circleCheckBox = new QCheckBox("&Circle");
-    showAnswerButton = new QPushButton("&Answer");
-    showAnswerButton->setCheckable(true);
+    showAnswerCheckBox = new QCheckBox("&Answer");
+    showAnswerCheckBox->setCheckable(true);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(previousButton);
     buttonLayout->addWidget(nextButton);
-    buttonLayout->addWidget(showAnswerButton);
+    buttonLayout->addWidget(showAnswerCheckBox);
     buttonLayout->addWidget(circleCheckBox);
 
-    progressBar = new QProgressBar;
-    progressBar->setMinimum(0);
-    progressBar->setMaximum(qalist_.size() - 1);
-    QHBoxLayout *progressLayout = new QHBoxLayout;
-    progressLayout->addWidget(progressBar);
+    sliderBar = new QSlider(Qt::Horizontal);
+    sliderBar->setMinimum(0);
+    sliderBar->setMaximum(qalist.size() - 1);
+    QHBoxLayout *sliderLayout = new QHBoxLayout;
+    sliderLayout->addWidget(sliderBar);
 
     listWidget = new QListWidget(this);
     for (const QPair<QString, QString> &x : qalist) {
@@ -61,7 +61,7 @@ QAWidget::QAWidget(const QAWidget::PureQAListT &qalist, QWidget *parent)
     rightLayout->addWidget(answerLabel);
     rightLayout->addWidget(answerInput_);
     rightLayout->addLayout(buttonLayout);
-    rightLayout->addLayout(progressLayout);
+    rightLayout->addLayout(sliderLayout);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addLayout(leftLayout);
@@ -75,7 +75,8 @@ QAWidget::QAWidget(const QAWidget::PureQAListT &qalist, QWidget *parent)
     connect(previousButton, &QPushButton::clicked, this, &QAWidget::onPreviousClicked);
     connect(nextButton, &QPushButton::clicked, this, &QAWidget::onNextClicked);
     connect(listWidget, &QListWidget::itemSelectionChanged, this, &QAWidget::onItemSelectionChanged);
-    connect(showAnswerButton, &QPushButton::clicked, this, &QAWidget::onShowAnswerButtonClicked);
+    connect(showAnswerCheckBox, &QCheckBox::stateChanged, this, &QAWidget::onShowAnswerCheckBoxStateChanged);
+    connect(sliderBar, &QSlider::valueChanged, this, &QAWidget::onSliderValueChanged);
 
     refresh();
 }
@@ -85,8 +86,12 @@ void QAWidget::refresh()
     listWidget->setCurrentItem(qalist_[current_index_].first);
     questionLabel_->setText(qalist_[current_index_].first->text());
     answerInput_->clear();
-    answerLabel->clear();
-    progressBar->setValue(current_index_);
+    if (showAnswerCheckBox->isChecked()) {
+        answerLabel->setText(qalist_[current_index_].second);
+    } else {
+        answerLabel->clear();
+    }
+    sliderBar->setValue(current_index_);
 }
 
 void QAWidget::onTextChanged(const QString &text)
@@ -127,9 +132,9 @@ void QAWidget::onNextClicked()
     }
 }
 
-void QAWidget::onShowAnswerButtonClicked()
+void QAWidget::onShowAnswerCheckBoxStateChanged(int state)
 {
-    if (showAnswerButton->isChecked())
+    if (state == Qt::Checked)
         answerLabel->setText(qalist_[current_index_].second);
     else
         answerLabel->clear();
@@ -139,6 +144,14 @@ void QAWidget::onItemSelectionChanged()
 {
     if (current_index_ != listWidget->currentRow()) {
         current_index_ = listWidget->currentRow();
+        refresh();
+    }
+}
+
+void QAWidget::onSliderValueChanged(int value)
+{
+    if (current_index_ != value) {
+        current_index_ = value;
         refresh();
     }
 }

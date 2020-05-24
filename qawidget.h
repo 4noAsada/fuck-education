@@ -8,7 +8,7 @@
 #include <QPair>
 #include <QWidget>
 #include <QCheckBox>
-#include <QProgressBar>
+#include <QSlider>
 #include <QListWidget>
 #include <QListWidgetItem>
 
@@ -30,8 +30,9 @@ public:
     void onAnswerChecked(bool correctness);
     void onPreviousClicked();
     void onNextClicked();
-    void onShowAnswerButtonClicked();
+    void onShowAnswerCheckBoxStateChanged(int state);
     void onItemSelectionChanged();
+    void onSliderValueChanged(int value);
 
     static const PureQAListT TEST_QALIST;
 
@@ -50,10 +51,10 @@ private:
     QPushButton *previousButton;
     QPushButton *nextButton;
 
-    QPushButton *showAnswerButton;
+    QCheckBox *showAnswerCheckBox;
 
     QCheckBox *circleCheckBox;
-    QProgressBar *progressBar;
+    QSlider *sliderBar;
 
     QListWidget *listWidget;
 
